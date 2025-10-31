@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
+    image: firstyarus-ocr-api
     container_name: firstyarus-ocr-api
     ports:
       - "8004:8000"
