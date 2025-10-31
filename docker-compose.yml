@@ -1,0 +1,13 @@
+version: '3.10'
+
+services:
+  ocr-api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: firstyarus-ocr-api
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+
