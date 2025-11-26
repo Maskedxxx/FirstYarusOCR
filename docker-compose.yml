@@ -9,6 +9,6 @@ services:
     container_name: firstyarus-ocr-api
     ports:
       - "8004:8000"
-    restart: unless-stopped
+    restart: always
 
 
