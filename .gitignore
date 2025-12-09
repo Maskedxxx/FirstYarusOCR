@@ -147,3 +147,15 @@ Thumbs.db
 # Uploaded files (if you want to keep them out of git)
 uploads/
 temp/
+
+# OCR Logs
+logs/
+
+# Model cache
+.cache/
+transformers_cache/
+
+# Local agent docs & experimental OCR service
+AGENTS.md
+note_for_agent.txt
+paddle_ocr_service/

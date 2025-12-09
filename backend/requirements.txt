@@ -1,3 +1,4 @@
+# FastAPI и основные зависимости
 fastapi==0.120.1
 pillow==12.0.0
 pytesseract==0.3.13
@@ -5,3 +6,11 @@ python-multipart==0.0.20
 uvicorn==0.38.0
 opencv-python==4.10.0.84
 numpy==2.0.0
+
+# Qwen3-VL зависимости
+torch>=2.0.0
+torchvision>=0.15.0
+transformers>=4.47.0
+accelerate>=0.25.0
+safetensors>=0.4.0
+sentencepiece>=0.1.99

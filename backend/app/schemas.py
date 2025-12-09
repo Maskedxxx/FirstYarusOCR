@@ -51,6 +51,22 @@ class SNILSData(BaseModel):
     registration_date: Optional[str] = Field(None, description="Дата регистрации (ДД.ММ.ГГГГ)")
 
 
+class QwenPassportData(BaseModel):
+    """Данные паспорта от Qwen3-VL"""
+    LastName: str = Field("", description="Фамилия")
+    FirstName: str = Field("", description="Имя")
+    MiddleName: str = Field("", description="Отчество")
+    DateOfBirth: str = Field("", description="Дата рождения")
+    PlaceOfBirth: str = Field("", description="Место рождения")
+    PassportSeries: str = Field("", description="Серия паспорта")
+    PassportNumber: str = Field("", description="Номер паспорта")
+    IssueDate: str = Field("", description="Дата выдачи")
+    ExpirationDate: str = Field("", description="Дата окончания действия")
+    IssuedBy: str = Field("", description="Кем выдан")
+    DepartmentCode: str = Field("", description="Код подразделения")
+    RegistrationAddress: str = Field("", description="Адрес регистрации")
+
+
 class OCRResponse(BaseModel):
     """Ответ OCR API"""
     success: bool = Field(..., description="Статус выполнения операции")
@@ -62,15 +78,20 @@ class OCRResponse(BaseModel):
         default_factory=dict,
         description="""
         Структурированные данные документа. Поля зависят от типа документа:
-        
+
         **passport**: series_number, issue_date, issue_authority, birth_date, birth_place, full_name, gender, mrz_line1-3
-        
-        **migration_card**: surname, name, patronymic, full_name, birth_date, citizenship, passport_number, 
+
+        **passport_qwen**: LastName, FirstName, MiddleName, DateOfBirth, PlaceOfBirth, PassportSeries,
+        PassportNumber, IssueDate, ExpirationDate, IssuedBy, DepartmentCode, RegistrationAddress
+
+        **migration_card**: surname, name, patronymic, full_name, birth_date, citizenship, passport_number,
         entry_date, departure_date, purpose_of_visit, entry_point, series_number, stay_period
-        
+
         **inn**: inn_number, full_name, birth_date, issue_date
-        
+
         **snils**: snils_number, full_name, birth_date, birth_place, gender, registration_date
         """
     )
     error: Optional[str] = Field(None, description="Сообщение об ошибке (если есть)")
+    request_id: Optional[str] = Field(None, description="ID запроса для логирования")
+    processing_time: Optional[float] = Field(None, description="Время обработки в секундах")

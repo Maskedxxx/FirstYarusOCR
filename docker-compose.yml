@@ -9,6 +9,23 @@ services:
     container_name: firstyarus-ocr-api
     ports:
       - "8004:8000"
+    volumes:
+      - ./logs:/app/logs
+      - model-cache:/app/.cache/huggingface
+    environment:
+      - PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512
+      - TRANSFORMERS_CACHE=/app/.cache/huggingface
+      - HF_HOME=/app/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     restart: always
+
+volumes:
+  model-cache:
 
 
