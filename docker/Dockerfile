@@ -5,7 +5,9 @@ FROM python:3.11-slim
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
     TRANSFORMERS_CACHE=/app/.cache/huggingface \
-    HF_HOME=/app/.cache/huggingface
+    HF_HOME=/app/.cache/huggingface \
+    API_PORT=80 \
+    LOG_RETENTION_DAYS=30
 
 # Устанавливаем системные зависимости для Tesseract OCR, OpenCV и Git
 RUN apt-get update && \
@@ -36,5 +38,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Копируем код приложения
 COPY . .
 
-# Команда запуска
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Открываем порт (для HF используется 80)
+EXPOSE 80
+
+# Команда запуска (порт можно переопределить через ENV)
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "80"]

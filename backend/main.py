@@ -45,9 +45,14 @@ async def root():
     """Корневой эндпоинт"""
     return {
         "message": "OCR API",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "status": "running"
     }
+
+@app.get("/health")
+async def health():
+    """Health check endpoint для Hugging Face и мониторинга"""
+    return {"status": "healthy"}
 
 if __name__ == "__main__":
     uvicorn.run(

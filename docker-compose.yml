@@ -8,7 +8,7 @@ services:
     image: firstyarus-ocr-api
     container_name: firstyarus-ocr-api
     ports:
-      - "8004:8000"
+      - "8004:80"
     volumes:
       - ./logs:/app/logs
       - model-cache:/app/.cache/huggingface
