@@ -1,0 +1,60 @@
+# FirstYarusOCR — демо-стандарт Spark (скил spark-deploy). Распознавание паспорта / миграционной карты /
+# ИНН / СНИЛС: Tesseract и Qwen3-VL-2B на GPU. Запуск: cd deploy && docker compose up -d --build.
+# Модель Qwen3-VL-2B грузится при первом запросе passport_qwen из общего кеша HF (первый раз — скачивание ~4.5 ГБ).
+# Туннель — под профилем public; авторизации у API нет → при публикации TUNA_EXTRA_ARGS=--basic-auth=…
+name: yarus-demo
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: yarus-demo:demo
+    container_name: yarus-demo
+    environment:
+      HF_HOME: /root/.cache/huggingface
+      PYTORCH_CUDA_ALLOC_CONF: max_split_size_mb:512
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+    ports:
+      - "127.0.0.1:${PORT}:80"          # только loopback
+    volumes:
+      - ../logs:/app/logs
+      - /home/masked/.cache/huggingface:/root/.cache/huggingface   # общий кеш моделей Spark
+    deploy:
+      resources:
+        limits:
+          memory: ${MEM_LIMIT:-12g}
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: "no"
+    logging: *logging
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:80/health', timeout=5).status==200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  tunnel:
+    profiles: ["public"]
+    image: yuccastream/tuna:0.34.2
+    container_name: yarus-demo-tunnel
+    network_mode: host
+    command: http 127.0.0.1:${PORT} --subdomain=${TUNA_SUBDOMAIN} --location=ru ${TUNA_EXTRA_ARGS}
+    environment:
+      TUNA_TOKEN: "${TUNA_TOKEN}"
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: "no"
+    logging: *logging

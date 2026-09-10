@@ -63,3 +63,6 @@ README.md
 # Uploads
 uploads/
 temp/
+# Демо-деплой Spark
+deploy/.env
+logs/
